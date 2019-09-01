@@ -16,6 +16,7 @@ def argument_parser():
 	parser.add_argument('--no-augment', action='store_false', dest='augment', help='If given, disable train-time data augmentation.')
 	parser.add_argument('--featloss', default=False, action='store_true', help='If given, calculate feature space loss.')
 	parser.add_argument('--quant_analysis', default=False, action='store_true', help='If given, performs quantitative analysis by sampling random instances. If not given, the code executes single instance inversion')
+	parser.add_argument('--mask_inv_flag', default=False, action='store_true', help='If given, invert the binary mask.')
 	return parser
 
 def normalise(x):
@@ -37,6 +38,33 @@ def area_calculation(norm_inv, debug_flag = False):
 	if debug_flag:
 		print("Percentage of enabled bins: %.2f" %(100 * area_enabled))
 	return area_enabled
+
+
+def invert_mask(mask, mask_inv_flag, area_mask, debug_flag):
+	'''
+	Reverses the mask, i.e. keeps the portion seems not useful for the classifier prediction
+	'''
+	if mask_inv_flag:
+		for i in range(mask.shape[0]):
+			for j in range(mask.shape[1]):
+				if mask[i][j]==0:
+					mask[i][j]=1
+				else:
+					mask[i][j]=0
+
+		# calculate enabled area of the inverted mask
+		# ideally it should be 1- area_mask, but doing it just for confirmation
+		n_bins_enabled = (mask==1).sum()
+		n_bins = mask.shape[0]* mask.shape[1]
+		area_mask_inv = n_bins_enabled/float(n_bins)
+		if debug_flag:
+			print("Area enabled [before mask inversion]: %f [after mask inversion]:%f" %(area_mask, area_mask_inv))
+			area_mask = area_mask_inv
+	else:
+		pass
+
+	return mask, area_mask
+
 
 
 def quant_result_analysis(pred_before, pred_after, area_per_instance, mt, class_threshold, debug_flag=False):

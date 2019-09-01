@@ -36,6 +36,7 @@ def main():
     print("dataset name:%s" %args.dataset)
     print("results path:%s" %args.results_dir)
     print("quantitative analysis:%s" %args.quant_analysis)
+    print("mask inversion flag: %r" % args.mask_inv_flag)
     print("-------------------------------")
     
     # default parameters 
@@ -54,15 +55,15 @@ def main():
         time_index = 10
         masking_threshold = [0.7]
         duration = 0 # no use
-        increment = 1
+        increment = 0.5
     else:
         preds_after = []
         area_per_instance = []
         result = []
         start_offset = 5
         end_offset = 20
-        duration = 2
-        increment = 1
+        duration = 200
+        increment = 0.5
         masking_threshold = np.arange(0.0, 1.2, 0.1)
         class_threshold = 0.66 # Calculated over Jamendo validation dataset
 
@@ -204,14 +205,21 @@ def main():
                 norm_inv = utils.normalise(mel_predictions[0])
                 norm_inv[norm_inv<mt] = 0 # Binary mask----- 
                 norm_inv[norm_inv>=mt] = 1
-                
+
+                if args.quant_analysis:
+                    # calculate area
+                    area = utils.area_calculation(norm_inv, debug_flag = df)
+                    
+                    # reversing the mask to keep the portions that seem not useful for the current instance prediction
+                    norm_inv, area = utils.invert_mask(mask = norm_inv, mask_inv_flag = args.mask_inv_flag, area_mask = area, debug_flag=df)
+
                 # masking out the input based on the mask created above
                 masked_input = np.zeros((batchsize, blocklen, mel_bands))
                 masked_input[0] = norm_inv * excerpts[excerpt_idx]
                 
                 if args.quant_analysis:                    
-                    # calculate and save the area
-                    area_per_instance.append(utils.area_calculation(norm_inv, debug_flag = df))
+                    # save the area enabled
+                    area_per_instance.append(area)
                     # feed the updated input to regenerate prediction
                     # just changing the first input.
                     predictions = pred_fn(masked_input)

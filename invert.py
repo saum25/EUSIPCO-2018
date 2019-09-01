@@ -244,7 +244,9 @@ def main():
     
     if args.quant_analysis:
         # save the quantitative analysis results
+        quant_result_columns = ['threshold', 'total instances', 'total fails', 'explanation loss [%]', 'average area']
         with open(args.results_dir + '/' + 'quant_analysis_res.txt', 'w') as fp:
+            fp.write('\n'.join('{} {} {} {} {}'.format(x[0], x[1], x[2], x[3], x[4]) for x in quant_result_columns))
             fp.write('\n'.join('{} {} {} {} {}'.format(x[0], x[1], x[2], x[3], x[4]) for x in result))
 
 

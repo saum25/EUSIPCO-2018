@@ -53,6 +53,7 @@ def main():
         time_index = 10
         masking_threshold = [0.7]
         duration = 0 # no use
+        increment = 1
     else:
         preds_after = []
         area_per_instance = []

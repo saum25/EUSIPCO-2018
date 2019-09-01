@@ -63,7 +63,7 @@ def main():
         end_offset = 20
         duration = 2
         increment = 1
-        masking_threshold = [0.1, 0.2]#np.arange(0.0, 1.1, 0.1)
+        masking_threshold = np.arange(0.0, 1.2, 0.1)
         class_threshold = 0.66 # Calculated over Jamendo validation dataset
 
     # printing and plotting parameters

@@ -22,6 +22,7 @@ import audio
 import model
 import upconv
 import plots
+import csv
 
 def main():
     # parse the command line arguments
@@ -60,9 +61,9 @@ def main():
         result = []
         start_offset = 5
         end_offset = 20
-        duration = 200
+        duration = 2
         increment = 1
-        masking_threshold = np.arange(0.0, 1.1, 0.1)
+        masking_threshold = [0.1, 0.2]#np.arange(0.0, 1.1, 0.1)
         class_threshold = 0.66 # Calculated over Jamendo validation dataset
 
     # printing and plotting parameters
@@ -245,10 +246,12 @@ def main():
     if args.quant_analysis:
         # save the quantitative analysis results
         quant_result_columns = ['threshold', 'total instances', 'total fails', 'explanation loss [%]', 'average area']
-        with open(args.results_dir + '/' + 'quant_analysis_res.txt', 'w') as fp:
-            fp.write('\n'.join('{} {} {} {} {}'.format(x[0], x[1], x[2], x[3], x[4]) for x in quant_result_columns))
-            fp.write('\n'.join('{} {} {} {} {}'.format(x[0], x[1], x[2], x[3], x[4]) for x in result))
-
+        with open(args.results_dir + '/' + 'quant_analysis_result.csv', 'w') as fp:
+            results_writer = csv.writer(fp, delimiter=',')
+            results_writer.writerow(quant_result_columns)
+            for result_th in result:
+                results_writer.writerow(result_th)
+            
 
 if __name__ == '__main__':
     main()

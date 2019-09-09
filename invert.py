@@ -37,7 +37,29 @@ def main():
     print("results path:%s" %args.results_dir)
     print("quantitative analysis:%s" %args.quant_analysis)
     print("mask inversion flag: %r" % args.mask_inv_flag)
+    print("plot quant results case: %r" %args.plot_quant_res)
     print("-------------------------------")
+    
+    # just plots the quantitative analysis results and exits
+    if args.plot_quant_res:
+        # jamendo results
+        exp_loss_jamendo_case1 = [0, 6.48, 10.87, 13.33, 15.51, 19.15, 25.94, 37.56, 49.11, 56.85, 57.77]#, 57.77]
+        exp_loss_jamendo_case2 = [57.77, 59.19, 58.11, 51.81, 43.1, 31.87, 22.84, 15.51, 11.03, 5.86, 0.03]#, 0]
+        rel_area_jamendo_case1 = [100, 96, 87, 77, 65, 53, 39, 26, 14, 4, 0]#, 0]
+        rel_area_jamendo_case2 = [0, 4, 13, 23, 35, 47, 61, 74, 86, 96, 100]#, 100]
+        exp_losses_jamendo = [exp_loss_jamendo_case1, exp_loss_jamendo_case2]
+        rel_areas_jamendo = [rel_area_jamendo_case1, rel_area_jamendo_case2]
+        
+        # rwc results
+        exp_loss_rwc_case1 = [0, 6.52, 10.9, 13.39, 15.87, 21.28, 30.92, 43.22, 53.41, 60.85, 63.66]#, 63.66]
+        exp_loss_rwc_case2 = [63.66, 64.5, 61.01, 52.55, 39.39, 26.27, 16.13, 9.55, 5.05, 2.26, 0.03]#, 0]
+        rel_area_rwc_case1 = [100, 96, 87, 75, 61, 47, 33, 20, 10, 3, 0]#, 0]
+        rel_area_rwc_case2 = [0, 4, 13, 25, 39, 53, 67, 80, 90, 97, 100]#, 100]
+        exp_losses_rwc = [exp_loss_rwc_case1, exp_loss_rwc_case2]
+        rel_areas_rwc = [rel_area_rwc_case1, rel_area_rwc_case2]
+        
+        plots.quant_eval(exp_losses_jamendo, rel_areas_jamendo, exp_losses_rwc, rel_areas_rwc, args.results_dir)
+        exit(0)
     
     # default parameters 
     sample_rate = 22050

@@ -17,6 +17,7 @@ def argument_parser():
 	parser.add_argument('--featloss', default=False, action='store_true', help='If given, calculate feature space loss.')
 	parser.add_argument('--quant_analysis', default=False, action='store_true', help='If given, performs quantitative analysis by sampling random instances. If not given, the code executes single instance inversion')
 	parser.add_argument('--mask_inv_flag', default=False, action='store_true', help='If given, invert the binary mask.')
+	parser.add_argument('--plot_quant_res', default=False, action='store_true', help='If given, skips all the processing and only plots quantitative evaluation results.')
 	return parser
 
 def normalise(x):

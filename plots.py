@@ -145,7 +145,51 @@ def special_cases(inp0, exp0, inp1, exp1, p0, p1, file_id, excerpt_id, results_p
     plt.savefig(results_path + '/'+ 'plot'+ '_fileid_'+ str(file_id) + '_excerptid_' + str(excerpt_id) + '_pred0_'+ "%.2f"  %p0 + '_pred1_'+ "%.2f"  %p1 +'.pdf', dpi = 300)
         
     
+def quant_eval(exp_loss_jamendo, rel_area_jamendo, exp_loss_rwc, rel_area_rwc, result_dir):
+    """
+    plots the quantitative evaluation results for the jamendo and rwc datasets 
+    each argument is a list of two lists - the first one contains results for 
+    the case when masked input is fed back to SVDNet and the second one contains
+    results for the case when the mask is inverted. The functions plots two
+    figures one for each dataset results.
+    """
     
+    thresholds = np.arange(0.0, 1.1, 0.1)    
+    plt.figure(1)
+    a = 0.60
+    lw = 2
+    m = 8
+    fs = 10
+    lp = 2
+    
+    # plot explanation loss
+    ax1 = plt.subplot(211)
+    ax1.plot(thresholds, exp_loss_jamendo[0], color='r', marker='.', mew = 4, alpha=a, linewidth=lw, label='$M^{Jamendo}_1$') # 0th list->normal mask case
+    ax1.plot(thresholds, exp_loss_jamendo[1], color='g', marker='|', mew = 3, ms = m, alpha=a, linewidth=lw, label='$M^{Jamendo}_2$') # 1st list->inverted mask case
+    ax1.plot(thresholds, exp_loss_rwc[0], color='b', marker='.', mew = 4, alpha=a, linewidth=lw, label='$M^{RWC}_1$') # 0th list->normal mask case    
+    ax1.plot(thresholds, exp_loss_rwc[1], color='m', marker='|', mew = 3, ms = m, alpha=a, linewidth=lw, label='$M^{RWC}_2$') # 1st list->inverted mask case
+    plt.setp(ax1.get_xticklabels(), visible=False) # turns of the xtick labels https://matplotlib.org/3.1.1/gallery/subplots_axes_and_figures/shared_axis_demo.html
+    #ax1.set_xlabel('masking threshold', labelpad=lp)
+    ax1.set_ylabel('explanation loss [%]', labelpad=lp)
+    ax1.set_ylim(0, 100)
+    plt.title('(A)')
+    ax1.grid()
+    ax1.legend(fontsize=fs, loc="upper center")
+
+    # plot relative area    
+    ax2 = plt.subplot(212, sharex=ax1)
+    ax2.plot(thresholds, rel_area_jamendo[0], color='r', marker='.', mew = 4, alpha=a, linewidth=lw, label='$M^{Jamendo}_1$') # 0th list->normal mask case
+    ax2.plot(thresholds, rel_area_jamendo[1], color='g', marker='|', mew = 3, ms = m, alpha=a, linewidth=lw, label='$M^{Jamendo}_2$')  # 1st list->inverted mask case
+    ax2.plot(thresholds, rel_area_rwc[0], color='b', marker='.', mew = 4, alpha=a, linewidth=lw, label='$M^{RWC}_1$') # 0th list->normal mask case
+    ax2.plot(thresholds, rel_area_rwc[1], color='m', marker='|', mew = 3, ms = m, alpha=a, linewidth=lw, label='$M^{RWC}_2$')  # 1st list->inverted mask case
+    ax2.set_xlabel('masking threshold', labelpad=lp)
+    ax2.set_ylabel('average relative area [%]', labelpad=lp)
+    plt.title('(B)')
+    ax2.grid()
+    ax2.legend(fontsize=fs, loc="center right")
+    
+    plt.tight_layout()
+    plt.savefig(result_dir + '/' + 'feat_inv_quant_res.pdf', dpi=300)
     
   
 
